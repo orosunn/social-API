@@ -13,10 +13,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      validate: {
-        validator: () => Promise.resolve(false),
-        message: 'Email validation failed'
-      }
     },
     thoughts: [
         {
@@ -26,7 +22,7 @@ const userSchema = new Schema(
       ],
     friends: [
         {
-          type: Schema.Types.ObjectId,
+          type: Schema.Types.ObjectId, //change to.userId??
           ref: 'user',
         },
       ],
@@ -37,6 +33,10 @@ const userSchema = new Schema(
     },
   }
 );
+
+userSchema.virtual('friendCount').get(function() {
+  return this.friends.length;
+});
 
 const User = model('user', userSchema);
 
