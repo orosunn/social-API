@@ -1,5 +1,6 @@
 const { Thought } = require('../models');
 const { User } = require('../models');
+const reactionSchema = require ('../models/reactions')
 
 module.exports = {
 
@@ -82,6 +83,33 @@ module.exports = {
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
+    }
+  },
+
+  // create a new reaction
+  async createReaction(req, res) {
+    try {
+      const { thoughtId, reactionBody, username } = req.body;
+  
+      const thought = await Thought.findById(thoughtId);
+  
+      if (!thought) {
+        return res.status(404).json({ message: 'No thought found' });
+      }
+  
+      const newReaction = {
+        reactionBody,
+        username
+      };
+  
+      thought.reactions.push(newReaction);
+  
+      await thought.save();
+  
+      res.status(201).json(thought);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server Error' });
     }
   },
 };
